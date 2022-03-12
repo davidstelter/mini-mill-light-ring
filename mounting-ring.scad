@@ -12,7 +12,7 @@ lightZOffset = -(lightHeight/2 + 10);
 ringOuterDiam = 85;
 ringInnerDiam = 50;
 ringHeight = 20;
-topRecessDiam=80;
+topRecessDiam = 80;
 ringZOffset = -ringHeight/2;
 
 magnetDiam = 8;
@@ -20,14 +20,12 @@ magnetPathDiam = (topRecessDiam-magnetDiam)-1;
 magnetHoleDepth=1;
 magnetRemovalHoleDiam=2;
 
+zThroughHoleLen = (ringHeight * 2) + 2;
+zThroughHoleOff = -(zThroughHoleLen / 2);
+
 module light_ring() {
 	lightR=(lightOuterDiam - lightInnerDiam) / 4;
 	translate([0,0,lightZOffset+lightR])
-	//union() {
-		//difference() {
-		//	cylinder(h=lightHeight, d=lightOuterDiam, center=true);
-		//	cylinder(h=lightHeight+1, d=lightInnerDiam, center=true);
-		//}
 
 	difference() {
 
@@ -57,13 +55,11 @@ module mounting_ring() {
 			translate([0,0, -ringHeight/2])
 				cylinder(h=ringHeight, d=lightOuterDiam + 0.5, center=true);
 
-			//translate([0,(topRecessDiam/2-magnetDiam/2)-1,-ringZOffset])
-				//cylinder(h=magnetHoleDepth+2, d=magnetDiam, center=true);
-				//
 			// light power lead hole
 			translate([-37, 0, 0])
 			cylinder(h=50, d=3, center=true);
 
+			translate([0,0,2])
 			linear_extrude(12) {
 				arc(39, 29, 110, 190);
 			}
@@ -77,7 +73,9 @@ module mounting_ring() {
 				circle(d = magnetDiam);
 			}
 
-			linear_extrude(80)
+			// magnet removal poke holes
+			translate([0,0,zThroughHoleOff])
+			linear_extrude(zThroughHoleLen)
 			for (i = [-1: 1])
 			rotate(i * 120) 
 			translate([0, magnetPathDiam/2]) {
@@ -92,7 +90,7 @@ translate([0,0,-(sleeveHeight/2)+2])
 	cylinder(h=sleeveHeight, d=sleeveDiam, center=true);
 }
 
-color("silver") sleeve();
+//color("silver") sleeve();
 
 color("white") light_ring();
 
