@@ -19,6 +19,17 @@ recesses are sized accordingly for a good interference fit, but I found the magn
 sometimes when temporarily sticking the light on a larger ferrous surface so the superglue is
 recommended to prevent this.
 
+## Power
+
+The automotive ring lights are supposed to run on "+12vdc", but in an actual car that's typically
+more like 13.8v and the ones I got seem "happy" (meaning: hasn't burned out yet!) running up
+around 16.4v, which gets significantly more brightness from it. I initially tried borrowing 12v from
+the mill's fan supply, but the output there is a bit below 12v on my mill and the light was
+disappointingly dim, so I dug around in my box of old power supplies and found that those marked as
+12v in reality had outputs ranging from 12.3v to 18.5v so hunt around a bit, and good luck! Cars
+often have the main voltage go as high as 18-19v when starting, so hopefully most of these lights
+are relatively tolerant of wide voltage swings.
+
 ## Rendering & Printing
 
 Use the [OpenSCAD customizer](https://en.wikibooks.org/wiki/OpenSCAD_User_Manual/Customizer) to
