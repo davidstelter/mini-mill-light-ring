@@ -1,32 +1,30 @@
 include <arc.scad>
 include <dc_jack.scad>
 
-$fn = 200;
-
+$fn = 100;
 debug = false;
-mainColor = "red";
+
+showMountingRing = true;
+showOuterShroud = true;
+showLight = true;
+showSpindle = true;
+showDcJack = true;
+
+bearingRecess = true;
+subtractLightTabRecess = true;
+
+spindleDiam = 40;
+spindleHeight = 52;
+
+lightOuterDiam = 82.75;
+lightInnerDiam = 68;
+lightHeight = 7.4;
 
 lightTabHeight = 3.45;
 lightTabWidth = 6;
 lightTabThick = 1.4;
 lightLatchThick = 1;
 
-showSpindle = true;
-spindleDiam = 40;
-spindleHeight = 52;
-
-showDcJack = true;
-
-bearingRecess = true;
-
-showLight = true;
-lightOuterDiam = 82.75;
-lightInnerDiam = 68;
-lightHeight = 7.4;
-subtractLightTabRecess = true;
-
-showMountingRing = true;
-showOuterShroud = true;
 shroudHeight = 20;
 ringOuterAddDiam = 2;
 ringOuterDiam = lightOuterDiam + ringOuterAddDiam;
@@ -40,7 +38,7 @@ lightZOffset = -(lightHeight + ringHeight)/2;
 magnetDiam = 8;
 magnetHeight = 3;
 magnetWiggle = 0.1;
-magnetPathDiam = (topRecessDiam-magnetDiam)-3.2;
+magnetPathDiam = (topRecessDiam-magnetDiam) - 3.2;
 magnetHoleDepth = 2;
 magnetRemovalHoleDiam = 2;
 
@@ -64,7 +62,7 @@ module light_ring_ring() {
 			rotate_extrude()
 				translate([(lightInnerDiam/2) + lightR, 0, 0])
 				scale([1,1.45])
-				circle(r=lightR, $fn=200);
+				circle(r=lightR, $fn=30);
 		}
 
 		translate([0,0,lightR])
@@ -88,11 +86,11 @@ module light_ring_tabs() {
 				[0,lightTabHeight-1]
 			]);
 
-		rotate([0,0,90])
+		rotate([0, 0, 90])
 		for (i = [-1 : 1]) {
-			rotate([0,0,120*i])
+			rotate([0, 0, 120*i])
 			translate([(lightInnerDiam/2) - lightTabThick, 0, 8])
-				cube([20,lightTabWidth,20], center=true);
+				cube([20, lightTabWidth, 20], center=true);
 		}
 	}
 }
@@ -100,7 +98,6 @@ module light_ring_tabs() {
 module light_ring_tab_recess() {
 	lightR=(lightOuterDiam - lightInnerDiam) / 4;
 	wiggle=0.1;
-	wiggleScaling=[1 + wiggle, 1 + wiggle, 1 + wiggle];
 	recessThick = lightTabThick + 1;
 	recessHeight = lightTabHeight + wiggle;
 	recessInner = 0 - wiggle;
@@ -125,9 +122,9 @@ module light_ring_tab_recess() {
 				]);
 
 			for (i = [-1 : 1]) {
-				rotate([0,0,120*i]) {
+				rotate([0, 0, 120*i]) {
 					translate([(lightInnerDiam/2) - lightTabThick, 0, 8]) {
-						cube([20,recessWidth,20], center=true);
+						cube([20, recessWidth, 20], center=true);
 
 						cylinder(d=pokeHoleD, h=20, center=true);
 					}
@@ -177,7 +174,6 @@ module outer_shroud() {
 				}
 			}
 
-			/* dc_jack_cutout(); */
 			rotate([0,0,90])
 			translate([0,-ringOuterDiam/2,5])
 			rotate([90,0,0]) {
@@ -185,8 +181,6 @@ module outer_shroud() {
 				translate([0,dcJackCutoutW/2,0])
 					cube([dcJackCutoutW,dcJackCutoutW,dcJackCutoutW], center=true);
 			}
-
-			//translate([0,0,shroudHeight*0.75]) cylinder(h=20,d=shroudD + 1, center=true);
 		}
 	}
 
@@ -194,8 +188,9 @@ module outer_shroud() {
 	translate([0,0,ringZOffset])
 	difference() {
 		union() { // positive
-		translate([0,0,-(shroudHeight-lipH)/2])//-(shroudZOff-lipH)/2])
-			color("orange") cylinder(h=lipH, d=shroudD, center=true);
+			translate([0, 0, -(shroudHeight-lipH)/2])
+			color("orange")
+				cylinder(h=lipH, d=shroudD, center=true);
 		}
 		union() { // negative
 			cylinder(h=ringHeight+10, d=lipInnerD , center=true);
@@ -213,7 +208,7 @@ module dc_jack_cutout() {
 	}
 }
 
-module mounting_ring(shroudHeight=10) {
+module mounting_ring() {
 	translate([0,0,ringZOffset])
 	difference() {
 		union() { // positive
@@ -233,23 +228,10 @@ module mounting_ring(shroudHeight=10) {
 			}
 
 			// light shroud & cutout for light
-			translate([0,0, -ringHeight/2]) {
-				/* cylinder(h=ringHeight, d=(shroudHeight <=0 ? ringOuterDiam + 1 : lightOuterDiam + 0.5), center=true); */
+			translate([0,0, -ringHeight/2])
 				cylinder(h=ringHeight, d=ringOuterDiam + 1, center=true);
 
-				//if (shroudHeight > 0) {
-				//	translate([0,0, -shroudHeight])
-				//	cylinder(h=ringHeight, d=ringOuterDiam + 1, center=true);
-				//}
-			}
-
 			dc_jack_cutout();
-
-			// toggle switch
-			rotate([0,0,135])
-			translate([0,-ringOuterDiam/2,5])
-			rotate([90,0,0])
-				cylinder(h=20, d=6.4, center=true);
 
 			// light power lead hole 1
 			translate([-37, 0, 0])
@@ -303,9 +285,9 @@ module mounting_ring(shroudHeight=10) {
 
 module spindle() {
 // R8 dimensions are imperial, sorry
-taperHeight=(15/16)*25.4;
-r8TaperD=1.25 * 25.4;
-r8InnerD=0.949 * 25.4;
+taperHeight = (15/16) * 25.4;
+r8TaperD = 1.25 * 25.4;
+r8InnerD = 0.949 * 25.4;
 
 	difference() {
 		union() {
@@ -313,14 +295,14 @@ r8InnerD=0.949 * 25.4;
 		}
 		union() {
 			cylinder(h=spindleHeight+2, d=r8InnerD, center=true);
-			translate([0,0,-((taperHeight/2) + 3)])
+			translate([0, 0, -((taperHeight/2) + 3)])
 				cylinder(d1=r8TaperD, d2=r8InnerD, h=taperHeight, center=true);
 		}
 	}
 }
 
 if (showSpindle) {
-	translate([0,0,-(spindleHeight/2)+2])
+	translate([0, 0, -(spindleHeight/2) + 2])
 	color("silver")
 		spindle();
 }
@@ -330,8 +312,8 @@ if (showLight) {
 }
 
 if (showMountingRing) {
-	color(mainColor)
-		mounting_ring(shroudHeight);
+	color("red")
+		mounting_ring();
 }
 
 if (showOuterShroud) {
@@ -339,7 +321,7 @@ if (showOuterShroud) {
 }
 
 if (showDcJack) {
-	translate([ringOuterDiam/2,0,-6])
-	rotate([0,90,0])
-	dc_jack();
+	translate([ringOuterDiam/2, 0, -6])
+	rotate([0, 90, 0])
+		dc_jack();
 }
