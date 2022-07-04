@@ -59,4 +59,6 @@ done things here, so be wary.
 
 ## License
 
-This project is released under the "MIT License", see file `LICENSE` for details.
+Copyright David Stelter 2022
+
+This project is licensed under the BSD & MIT licenses, see files `LICENSE-BSD` and `LICENSE-MIT` for details.
